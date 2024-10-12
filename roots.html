@@ -21,9 +21,10 @@
             font-weight: bold;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Quadratic Equation Solver</h1>
+    <h1>Quadratic Equation Solver with a Graph</h1>
     <p>Enter values for a, b, and c (for the equation ax² + bx + c = 0):</p>
     <label for="a">a: </label>
     <input type="number" id="a" step="any" placeholder="Enter value of a"><br>
@@ -32,9 +33,11 @@
     <label for="c">c: </label>
     <input type="number" id="c" step="any" placeholder="Enter value of c"><br>
 
-    <button onclick="solveEquation()">Solve</button>
+    <button onclick="solveEquation()">Solve and Graph</button>
 
     <div class="result" id="result"></div>
+
+    <canvas id="quadraticGraph"></canvas>
 
     <script>
         function solveEquation() {
@@ -49,7 +52,7 @@
                 return;
             }
 
-            // Case when a == 0 and b == 0
+            // Case when a == 0 and (b == 0 or b !=0)
             if (a === 0 && b === 0) {
                 if (c === 0) {
                     resultDiv.innerHTML = "Roots are real and equal (0=0).";
@@ -75,6 +78,59 @@
                     resultDiv.innerHTML = "Roots are not real.";
                 }
             }
+
+
+            graphQuadratic(a, b, c);
+        }
+
+        function graphQuadratic(a, b, c) {
+            let ctx = document.getElementById('quadraticGraph').getContext('2d');
+
+            // Generate x values (from -10 to 10 for a reasonable range)
+            let xValues = [];
+            let yValues = [];
+            for (let x = -10; x <= 10; x += 0.1) {
+                let y = a * x * x + b * x + c;
+                xValues.push(x);
+                yValues.push(y);
+            }
+
+            // Remove previous chart if it exists
+            if (window.myChart) {
+                window.myChart.destroy();
+            }
+
+            // Create the new chart
+            window.myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        label: 'y = ' + a + 'x² + ' + b + 'x + ' + c,
+                        data: yValues,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'x'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'y'
+                            }
+                        }
+                    }
+                }
+            });
         }
     </script>
     <a href="index.html">Back to Home</a>
